@@ -1,9 +1,12 @@
-﻿namespace web_api_personas.Entidades
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace web_api_personas.Entidades
 {
     public class Correo
     {
         public int Id { get; set; }
-        public string correos { get; set; } = null!;
+        [Required (ErrorMessage = "El campo {0} es requerido")]
+        public required string correos { get; set; } 
         public int personaId { get; set; }
     }
 }

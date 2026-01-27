@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace web_api_personas.Controllers
 {
     [Route("api/categorias")]
-    public class CategoriasController
+    [ApiController]
+    public class CategoriasController : ControllerBase
     {
         [HttpPost]
         public void Post()

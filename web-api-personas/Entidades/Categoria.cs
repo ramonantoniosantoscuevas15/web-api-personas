@@ -1,8 +1,11 @@
-﻿namespace web_api_personas.Entidades
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace web_api_personas.Entidades
 {
     public class Categoria
     {
         public int Id { get; set; }
-        public string tipo { get; set; } = null!;   
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        public required string tipo { get; set; } = null!;   
     }
 }

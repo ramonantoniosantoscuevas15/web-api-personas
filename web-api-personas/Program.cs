@@ -6,15 +6,23 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddOutputCache(opciones =>
+{
+    opciones.DefaultExpirationTimeSpan = TimeSpan.FromSeconds(10);
+});
 var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
+if(app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 app.UseCors();
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseHttpsRedirection();
 
+app.UseHttpsRedirection();
+app.UseOutputCache();
 app.UseAuthorization();
 
 app.MapControllers();
