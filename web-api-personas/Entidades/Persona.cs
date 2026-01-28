@@ -13,8 +13,8 @@ namespace web_api_personas.Entidades
         public required string apellido { get; set; } = null!;  
         public DateTime ? fechanacimiento { get; set; }
         public int ? cedula { get; set; }
-
-        [StringLength(maximumLength:500, ErrorMessage = "El campo {0} no puede tener menos de {1} caracteres")]
-        public string ? notas { get; set; }
+        public List<Correo> Correos { get; set; } = new List<Correo>();
+        public List<Dirreccion> Dirreciones { get; set; } = new List<Dirreccion>();
+        public List<Telefono> Telefonos { get; set; } = new List<Telefono>();
     }
 }
