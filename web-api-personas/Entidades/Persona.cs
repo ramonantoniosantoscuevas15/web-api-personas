@@ -13,8 +13,12 @@ namespace web_api_personas.Entidades
         public required string apellido { get; set; } = null!;  
         public DateTime ? fechanacimiento { get; set; }
         public int ? cedula { get; set; }
+        public Correo Correo { get; set; } = null!;
+        public Dirreccion Dirreccion { get; set; } = null!;
+        public Telefono Telefono { get; set; } = null!;
         public List<Correo> Correos { get; set; } = new List<Correo>();
         public List<Dirreccion> Dirreciones { get; set; } = new List<Dirreccion>();
         public List<Telefono> Telefonos { get; set; } = new List<Telefono>();
+        public List<CategoriaPersona> CategoriaPersonas { get; set; } = new List<CategoriaPersona>();
     }
 }
