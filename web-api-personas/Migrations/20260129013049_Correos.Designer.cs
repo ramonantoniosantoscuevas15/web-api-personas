@@ -12,8 +12,8 @@ using web_api_personas;
 namespace web_api_personas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260128200637_Telefonos")]
-    partial class Telefonos
+    [Migration("20260129013049_Correos")]
+    partial class Correos
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,49 +33,18 @@ namespace web_api_personas.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("PersonaId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("correos")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PersonaId");
+
                     b.ToTable("Correos");
-                });
-
-            modelBuilder.Entity("web_api_personas.Entidades.Dirreccion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ciudad")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("codigopostal")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("pais")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("provincia")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("tipo")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ubicacion")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Dirrecciones");
                 });
 
             modelBuilder.Entity("web_api_personas.Entidades.Persona", b =>
@@ -105,26 +74,18 @@ namespace web_api_personas.Migrations
                     b.ToTable("Personas");
                 });
 
-            modelBuilder.Entity("web_api_personas.Entidades.Telefono", b =>
+            modelBuilder.Entity("web_api_personas.Entidades.Correo", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                    b.HasOne("web_api_personas.Entidades.Persona", null)
+                        .WithMany("Correos")
+                        .HasForeignKey("PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("codigopais")
-                        .HasColumnType("text");
-
-                    b.Property<int>("numero")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("tipo")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Telefonos");
+            modelBuilder.Entity("web_api_personas.Entidades.Persona", b =>
+                {
+                    b.Navigation("Correos");
                 });
 #pragma warning restore 612, 618
         }

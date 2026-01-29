@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -6,27 +7,25 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace web_api_personas.Migrations
 {
     /// <inheritdoc />
-    public partial class Dirrecciones : Migration
+    public partial class Personas : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Dirrecciones",
+                name: "Personas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    tipo = table.Column<string>(type: "text", nullable: true),
-                    ubicacion = table.Column<string>(type: "text", nullable: false),
-                    ciudad = table.Column<string>(type: "text", nullable: false),
-                    provincia = table.Column<string>(type: "text", nullable: false),
-                    codigopostal = table.Column<string>(type: "text", nullable: false),
-                    pais = table.Column<string>(type: "text", nullable: false)
+                    nombre = table.Column<string>(type: "text", nullable: false),
+                    apellido = table.Column<string>(type: "text", nullable: false),
+                    fechanacimiento = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    cedula = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Dirrecciones", x => x.Id);
+                    table.PrimaryKey("PK_Personas", x => x.Id);
                 });
         }
 
@@ -34,7 +33,7 @@ namespace web_api_personas.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Dirrecciones");
+                name: "Personas");
         }
     }
 }

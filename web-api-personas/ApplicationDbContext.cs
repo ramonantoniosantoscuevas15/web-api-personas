@@ -11,6 +11,7 @@ namespace web_api_personas
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CategoriaPersona>().HasKey(c => new { c.categoriaId,c.personaId });
+            
         }
         public DbSet<Persona> Personas { get; set; }
         public DbSet<Correo> Correos { get; set; }

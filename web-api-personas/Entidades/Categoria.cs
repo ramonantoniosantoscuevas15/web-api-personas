@@ -8,6 +8,6 @@ namespace web_api_personas.Entidades
         [Required(ErrorMessage = "El campo {0} es requerido")]
         public required string tipo { get; set; } = null!;
 
-        //public List<CategoriaPersona> CategoriaPersonas { get; set; } = new List<CategoriaPersona>();
+        public List<CategoriaPersona> CategoriaPersonas { get; set; } = new List<CategoriaPersona>();
     }
 }

@@ -12,8 +12,8 @@ using web_api_personas;
 namespace web_api_personas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260128201208_CategoriaPersonas")]
-    partial class CategoriaPersonas
+    [Migration("20260129013313_Dirrecciones")]
+    partial class Dirrecciones
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,38 +25,6 @@ namespace web_api_personas.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("web_api_personas.Entidades.Categoria", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("tipo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categorias");
-                });
-
-            modelBuilder.Entity("web_api_personas.Entidades.CategoriaPersona", b =>
-                {
-                    b.Property<int>("categoriaId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("personaId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("categoriaId", "personaId");
-
-                    b.HasIndex("personaId");
-
-                    b.ToTable("CategoriaPersonas");
-                });
-
             modelBuilder.Entity("web_api_personas.Entidades.Correo", b =>
                 {
                     b.Property<int>("Id")
@@ -65,11 +33,16 @@ namespace web_api_personas.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("PersonaId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("correos")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PersonaId");
 
                     b.ToTable("Correos");
                 });
@@ -81,6 +54,9 @@ namespace web_api_personas.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PersonaId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ciudad")
                         .IsRequired()
@@ -98,7 +74,7 @@ namespace web_api_personas.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("tipo")
+                    b.Property<string>("tipodirrecion")
                         .HasColumnType("text");
 
                     b.Property<string>("ubicacion")
@@ -106,6 +82,8 @@ namespace web_api_personas.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PersonaId");
 
                     b.ToTable("Dirrecciones");
                 });
@@ -137,45 +115,29 @@ namespace web_api_personas.Migrations
                     b.ToTable("Personas");
                 });
 
-            modelBuilder.Entity("web_api_personas.Entidades.Telefono", b =>
+            modelBuilder.Entity("web_api_personas.Entidades.Correo", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("codigopais")
-                        .HasColumnType("text");
-
-                    b.Property<int>("numero")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("tipo")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Telefonos");
+                    b.HasOne("web_api_personas.Entidades.Persona", null)
+                        .WithMany("Correos")
+                        .HasForeignKey("PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("web_api_personas.Entidades.CategoriaPersona", b =>
+            modelBuilder.Entity("web_api_personas.Entidades.Dirreccion", b =>
                 {
-                    b.HasOne("web_api_personas.Entidades.Categoria", "Categoria")
-                        .WithMany()
-                        .HasForeignKey("categoriaId")
+                    b.HasOne("web_api_personas.Entidades.Persona", null)
+                        .WithMany("Dirreciones")
+                        .HasForeignKey("PersonaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.HasOne("web_api_personas.Entidades.Persona", "Persona")
-                        .WithMany()
-                        .HasForeignKey("personaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            modelBuilder.Entity("web_api_personas.Entidades.Persona", b =>
+                {
+                    b.Navigation("Correos");
 
-                    b.Navigation("Categoria");
-
-                    b.Navigation("Persona");
+                    b.Navigation("Dirreciones");
                 });
 #pragma warning restore 612, 618
         }

@@ -62,7 +62,7 @@ namespace web_api_personas.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("PersonaId")
+                    b.Property<int>("PersonaId")
                         .HasColumnType("integer");
 
                     b.Property<string>("correos")
@@ -84,7 +84,7 @@ namespace web_api_personas.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("PersonaId")
+                    b.Property<int>("PersonaId")
                         .HasColumnType("integer");
 
                     b.Property<string>("ciudad")
@@ -103,7 +103,7 @@ namespace web_api_personas.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("tipo")
+                    b.Property<string>("tipodirrecion")
                         .HasColumnType("text");
 
                     b.Property<string>("ubicacion")
@@ -125,15 +125,6 @@ namespace web_api_personas.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CorreoId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("DirreccionId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TelefonoId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("apellido")
                         .IsRequired()
                         .HasColumnType("text");
@@ -150,12 +141,6 @@ namespace web_api_personas.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CorreoId");
-
-                    b.HasIndex("DirreccionId");
-
-                    b.HasIndex("TelefonoId");
-
                     b.ToTable("Personas");
                 });
 
@@ -167,7 +152,7 @@ namespace web_api_personas.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("PersonaId")
+                    b.Property<int>("PersonaId")
                         .HasColumnType("integer");
 
                     b.Property<string>("codigopais")
@@ -176,7 +161,7 @@ namespace web_api_personas.Migrations
                     b.Property<int>("numero")
                         .HasColumnType("integer");
 
-                    b.Property<string>("tipo")
+                    b.Property<string>("tiponumero")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -189,7 +174,7 @@ namespace web_api_personas.Migrations
             modelBuilder.Entity("web_api_personas.Entidades.CategoriaPersona", b =>
                 {
                     b.HasOne("web_api_personas.Entidades.Categoria", "Categoria")
-                        .WithMany()
+                        .WithMany("CategoriaPersonas")
                         .HasForeignKey("categoriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -209,48 +194,32 @@ namespace web_api_personas.Migrations
                 {
                     b.HasOne("web_api_personas.Entidades.Persona", null)
                         .WithMany("Correos")
-                        .HasForeignKey("PersonaId");
+                        .HasForeignKey("PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("web_api_personas.Entidades.Dirreccion", b =>
                 {
                     b.HasOne("web_api_personas.Entidades.Persona", null)
                         .WithMany("Dirreciones")
-                        .HasForeignKey("PersonaId");
-                });
-
-            modelBuilder.Entity("web_api_personas.Entidades.Persona", b =>
-                {
-                    b.HasOne("web_api_personas.Entidades.Correo", "Correo")
-                        .WithMany()
-                        .HasForeignKey("CorreoId")
+                        .HasForeignKey("PersonaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("web_api_personas.Entidades.Dirreccion", "Dirreccion")
-                        .WithMany()
-                        .HasForeignKey("DirreccionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("web_api_personas.Entidades.Telefono", "Telefono")
-                        .WithMany()
-                        .HasForeignKey("TelefonoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Correo");
-
-                    b.Navigation("Dirreccion");
-
-                    b.Navigation("Telefono");
                 });
 
             modelBuilder.Entity("web_api_personas.Entidades.Telefono", b =>
                 {
                     b.HasOne("web_api_personas.Entidades.Persona", null)
                         .WithMany("Telefonos")
-                        .HasForeignKey("PersonaId");
+                        .HasForeignKey("PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("web_api_personas.Entidades.Categoria", b =>
+                {
+                    b.Navigation("CategoriaPersonas");
                 });
 
             modelBuilder.Entity("web_api_personas.Entidades.Persona", b =>

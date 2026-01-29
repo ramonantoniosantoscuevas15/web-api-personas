@@ -5,7 +5,7 @@ namespace web_api_personas.Entidades
     public class Dirreccion
     {
         public int Id { get; set; }
-        public string ? tipo { get; set; } 
+        public string ? tipodirrecion { get; set; } 
         [Required (ErrorMessage = "El campo {0} es requerido")]
         public required string ubicacion { get; set; } 
         [Required (ErrorMessage = "El campo {0} es requerido")]
@@ -16,7 +16,7 @@ namespace web_api_personas.Entidades
         public required string codigopostal { get; set; } 
         [Required(ErrorMessage = "El campo {0} es requerido")]
         public required string pais { get; set; } = null!;
-        //public Persona Persona { get; set; } = null!;   
-        //public int personaId { get; set; }
+          
+        public int PersonaId { get; set; }
     }
 }

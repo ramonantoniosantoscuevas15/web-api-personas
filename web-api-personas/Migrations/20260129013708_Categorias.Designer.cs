@@ -12,7 +12,7 @@ using web_api_personas;
 namespace web_api_personas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260128200808_Categorias")]
+    [Migration("20260129013708_Categorias")]
     partial class Categorias
     {
         /// <inheritdoc />
@@ -50,11 +50,16 @@ namespace web_api_personas.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("PersonaId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("correos")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PersonaId");
 
                     b.ToTable("Correos");
                 });
@@ -66,6 +71,9 @@ namespace web_api_personas.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PersonaId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ciudad")
                         .IsRequired()
@@ -83,7 +91,7 @@ namespace web_api_personas.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("tipo")
+                    b.Property<string>("tipodirrecion")
                         .HasColumnType("text");
 
                     b.Property<string>("ubicacion")
@@ -91,6 +99,8 @@ namespace web_api_personas.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PersonaId");
 
                     b.ToTable("Dirrecciones");
                 });
@@ -130,18 +140,59 @@ namespace web_api_personas.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("PersonaId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("codigopais")
                         .HasColumnType("text");
 
                     b.Property<int>("numero")
                         .HasColumnType("integer");
 
-                    b.Property<string>("tipo")
+                    b.Property<string>("tiponumero")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PersonaId");
+
                     b.ToTable("Telefonos");
+                });
+
+            modelBuilder.Entity("web_api_personas.Entidades.Correo", b =>
+                {
+                    b.HasOne("web_api_personas.Entidades.Persona", null)
+                        .WithMany("Correos")
+                        .HasForeignKey("PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("web_api_personas.Entidades.Dirreccion", b =>
+                {
+                    b.HasOne("web_api_personas.Entidades.Persona", null)
+                        .WithMany("Dirreciones")
+                        .HasForeignKey("PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("web_api_personas.Entidades.Telefono", b =>
+                {
+                    b.HasOne("web_api_personas.Entidades.Persona", null)
+                        .WithMany("Telefonos")
+                        .HasForeignKey("PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("web_api_personas.Entidades.Persona", b =>
+                {
+                    b.Navigation("Correos");
+
+                    b.Navigation("Dirreciones");
+
+                    b.Navigation("Telefonos");
                 });
 #pragma warning restore 612, 618
         }

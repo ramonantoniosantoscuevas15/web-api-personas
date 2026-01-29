@@ -12,8 +12,8 @@ using web_api_personas;
 namespace web_api_personas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260128200128_Correos")]
-    partial class Correos
+    [Migration("20260129012757_Personas")]
+    partial class Personas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,23 +24,6 @@ namespace web_api_personas.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("web_api_personas.Entidades.Correo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("correos")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Correos");
-                });
 
             modelBuilder.Entity("web_api_personas.Entidades.Persona", b =>
                 {

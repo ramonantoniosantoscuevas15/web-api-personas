@@ -17,12 +17,24 @@ namespace web_api_personas.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    correos = table.Column<string>(type: "text", nullable: false)
+                    correos = table.Column<string>(type: "text", nullable: false),
+                    PersonaId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Correos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Correos_Personas_PersonaId",
+                        column: x => x.PersonaId,
+                        principalTable: "Personas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Correos_PersonaId",
+                table: "Correos",
+                column: "PersonaId");
         }
 
         /// <inheritdoc />
