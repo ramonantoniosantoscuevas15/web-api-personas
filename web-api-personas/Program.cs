@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(Program));
 var connectionString = builder.Configuration.GetConnectionString("PostgreSQLConnetion");
 builder.Services.AddDbContext<ApplicationDbContext>(opciones => opciones.UseNpgsql(connectionString));
 builder.Services.AddOutputCache(opciones =>
