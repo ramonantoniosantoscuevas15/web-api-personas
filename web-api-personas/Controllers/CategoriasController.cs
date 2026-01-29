@@ -32,7 +32,7 @@ namespace web_api_personas.Controllers
         }
         [HttpGet ("{id:int}", Name = "agregarcategoria") ]
         [OutputCache(Tags = [cacheTag])]
-        public async Task<ActionResult<Categoridto>> Get(int id)
+        public async Task<ActionResult<Categoriadto>> Get(int id)
         {
             throw new NotImplementedException();
         }

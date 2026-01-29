@@ -15,7 +15,7 @@ namespace web_api_personas.Entidades
         [Required(ErrorMessage = "El campo {0} es requerido")]
         public required string codigopostal { get; set; } 
         [Required(ErrorMessage = "El campo {0} es requerido")]
-        public required string pais { get; set; } = null!;
+        public required string pais { get; set; }
           
         public int PersonaId { get; set; }
     }
