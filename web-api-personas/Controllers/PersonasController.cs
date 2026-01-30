@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using web_api_personas.DTOs;
 using web_api_personas.Entidades;
 
@@ -8,15 +10,25 @@ namespace web_api_personas.Controllers
     [ApiController]
     public class PersonasController : ControllerBase
     {
-        
-        
-        public PersonasController() { }
-        [HttpPost]
-        public IActionResult Post(CrearPersonadto personadto)
+        private readonly IOutputCacheStore outputCacheStore;
+        private readonly ApplicationDbContext context;
+        private readonly IMapper mapper;
+
+        public PersonasController(IOutputCacheStore outputCacheStore, ApplicationDbContext context, IMapper mapper)
         {
-            // Lógica para manejar la solicitud POST a /api/personas
-            return Ok();
+            this.outputCacheStore = outputCacheStore;
+            this.context = context;
+            this.mapper = mapper;
         }
+        [HttpPost]
+        public async Task <IActionResult> Post( CrearPersonadto crearpersonadto)
+        {
+            var persona = mapper.Map<Persona>(crearpersonadto);
+            context.Add(persona);
+            await context.SaveChangesAsync();
+            return CreatedAtRoute("AgregarPersona", new {id= persona.Id},persona);
+        }
+        [HttpGet("{id:int}", Name = "AgregarPersona")]
         [HttpDelete]
         public void Delete()
         {

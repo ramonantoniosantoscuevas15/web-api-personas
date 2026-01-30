@@ -8,8 +8,8 @@ namespace web_api_personas.DTOs
         public required string apellido { get; set; } = null!;
         public DateTime? fechanacimiento { get; set; }
         public int? cedula { get; set; }
-        public CrearCorreodto Correos { get; set; } = null!;
-        public CrearDirrecciondto Dirrecciones { get; set; } = null!;   
-        public List<Telefono> Telefonos { get; set; } = new List<Telefono>();
+        public List<CrearCorreodto> Correos { get; set; } = null!;
+        public List<CrearDirrecciondto>  Dirrecciones { get; set; } = null!;   
+        public List<CrearTelefonodto> Telefonos { get; set; } = null!;
     }
 }
