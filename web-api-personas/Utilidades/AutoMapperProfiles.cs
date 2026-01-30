@@ -15,6 +15,7 @@ namespace web_api_personas.Utilidades
         private void CofigurarMappeoCategorias()
         {
             CreateMap<CrearCategoriadto,Categoria>();
+            CreateMap<Categoria,Categoriadto>();
         }
         private void ConfigurarMappeoPersonas()
         {

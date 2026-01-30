@@ -13,12 +13,14 @@ namespace web_api_personas.Controllers
         private readonly IOutputCacheStore outputCacheStore;
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private const string cacheTag = "personas";
 
         public PersonasController(IOutputCacheStore outputCacheStore, ApplicationDbContext context, IMapper mapper)
         {
             this.outputCacheStore = outputCacheStore;
             this.context = context;
             this.mapper = mapper;
+            
         }
         [HttpPost]
         public async Task <IActionResult> Post( CrearPersonadto crearpersonadto)
@@ -29,6 +31,7 @@ namespace web_api_personas.Controllers
             return CreatedAtRoute("AgregarPersona", new {id= persona.Id},persona);
         }
         [HttpGet("{id:int}", Name = "AgregarPersona")]
+        [OutputCache(Tags = [cacheTag])]
         [HttpDelete]
         public void Delete()
         {

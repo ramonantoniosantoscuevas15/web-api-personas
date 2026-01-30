@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using web_api_personas.DTOs;
 using web_api_personas.Entidades;
@@ -22,6 +24,13 @@ namespace web_api_personas.Controllers
             this.context = context;
             this.mapper = mapper;
         }
+        [HttpGet]//api/categorias
+        [OutputCache(Tags = [cacheTag])]
+        public async Task<List<Categoriadto>> Get()
+        {
+            return await context.Categorias.ProjectTo<Categoriadto>(mapper.ConfigurationProvider).ToListAsync();
+            
+        }
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CrearCategoriadto categoriaCreaciondto)
         {
@@ -32,10 +41,8 @@ namespace web_api_personas.Controllers
         }
         [HttpGet ("{id:int}", Name = "agregarcategoria") ]
         [OutputCache(Tags = [cacheTag])]
-        public async Task<ActionResult<Categoriadto>> Get(int id)
-        {
-            throw new NotImplementedException();
-        }
+
+        
         [HttpDelete]
         public void Delete()
         {
