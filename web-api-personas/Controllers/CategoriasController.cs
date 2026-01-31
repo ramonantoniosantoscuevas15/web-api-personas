@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using web_api_personas.DTOs;
 using web_api_personas.Entidades;
+using web_api_personas.Utilidades;
 
 namespace web_api_personas.Controllers
 {
@@ -26,9 +27,14 @@ namespace web_api_personas.Controllers
         }
         [HttpGet]//api/categorias
         [OutputCache(Tags = [cacheTag])]
-        public async Task<List<Categoriadto>> Get()
+        public async Task<List<Categoriadto>> Get([FromQuery] Paginaciondto paginacion)
         {
-            return await context.Categorias.ProjectTo<Categoriadto>(mapper.ConfigurationProvider).ToListAsync();
+            var queryable = context.Categorias;
+            await HttpContext.InsertarParametrosPaginacionEncabecera(queryable);
+            return await queryable
+                .OrderBy(c => c.tipo)
+                .Paginar(paginacion)
+                .ProjectTo<Categoriadto>(mapper.ConfigurationProvider).ToListAsync();
             
         }
         [HttpPost]
@@ -41,8 +47,12 @@ namespace web_api_personas.Controllers
         }
         [HttpGet ("{id:int}", Name = "agregarcategoria") ]
         [OutputCache(Tags = [cacheTag])]
+        public async Task<ActionResult<Categoriadto>> Get(int id)
+        {
+            throw new NotImplementedException();
+        }
 
-        
+
         [HttpDelete]
         public void Delete()
         {
