@@ -43,13 +43,37 @@ namespace web_api_personas.Controllers
             var categoria = mapper.Map<Categoria>(categoriaCreaciondto);
             context.Add(categoria);
             await context.SaveChangesAsync();
+            await outputCacheStore.EvictByTagAsync(cacheTag,default);
             return CreatedAtRoute("agregarcategoria", new {id = categoria.Id},categoria);
         }
-        [HttpGet ("{id:int}", Name = "agregarcategoria") ]
+        [HttpGet ("{id:int}" )]//api/categorias/
         [OutputCache(Tags = [cacheTag])]
         public async Task<ActionResult<Categoriadto>> Get(int id)
         {
-            throw new NotImplementedException();
+            var categoria = await context.Categorias.
+                ProjectTo<Categoriadto>(mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(c=> c.Id == id);
+            if (categoria == null)
+            {
+                return NotFound();
+            }
+            return categoria;
+        }
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Put( int id, [FromBody] CrearCategoriadto categoriaCreaciondto)
+        {
+            var categoriaexiste = await context.Categorias.AnyAsync(c => c.Id == id);
+
+            if (!categoriaexiste)
+            {
+                return NotFound();
+            }
+            var categoria = mapper.Map<Categoria>(categoriaCreaciondto);
+            categoria.Id = id;
+            context.Update(categoria);
+            await context.SaveChangesAsync();
+            await outputCacheStore.EvictByTagAsync(cacheTag, default);
+            return NoContent();
         }
 
 
