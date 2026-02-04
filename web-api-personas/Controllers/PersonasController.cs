@@ -38,12 +38,14 @@ namespace web_api_personas.Controllers
 
         }
         [HttpPost]
-        public async Task <IActionResult> Post( CrearPersonadto crearpersonadto)
+        public async Task <IActionResult> Post(CrearPersonadto crearpersonadto)
         {
             var persona = mapper.Map<Persona>(crearpersonadto);
             context.Add(persona);
             await context.SaveChangesAsync();
-            return CreatedAtRoute("AgregarPersona", new {id= persona.Id},persona);
+            await outputCacheStore.EvictByTagAsync(cacheTag,default);
+            var personaDto = mapper.Map<Personadto>(persona);
+            return CreatedAtRoute("AgregarPersona", new {id = persona.Id}, personaDto);
         }
         [HttpGet("{id:int}", Name = "AgregarPersona")]
         [OutputCache(Tags = [cacheTag])]
@@ -57,6 +59,14 @@ namespace web_api_personas.Controllers
                 return NotFound();
             }
             return persona;
+        }
+        [HttpGet("PostCategoria")]
+        public async Task <ActionResult<CategoriaPersonadto>> PostCategoria()
+        {
+            var categorias = await context.Categorias
+                .ProjectTo<Categoriadto>(mapper.ConfigurationProvider)
+                .ToListAsync(); 
+            return new CategoriaPersonadto { Categorias = categorias };
         }
         [HttpDelete]
         public void Delete()

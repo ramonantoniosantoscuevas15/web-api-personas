@@ -19,19 +19,26 @@ namespace web_api_personas.Utilidades
         }
         private void ConfigurarMappeoPersonas()
         {
-            CreateMap<CrearPersonadto,Persona>().ForMember(
+            CreateMap<CrearPersonadto, Persona>().ForMember(
                 entidad => entidad.Correos,
-                dto => dto.MapFrom( dto => dto.Correos)
+                dto => dto.MapFrom(dto => dto.Correos)
             ).ForMember(
                 entidad => entidad.Dirreciones,
-                dto => dto.MapFrom( dto => dto.Dirrecciones)
+                dto => dto.MapFrom(dto => dto.Dirrecciones)
             ).ForMember(
                 entidad => entidad.Telefonos,
-                dto => dto.MapFrom( dto => dto.Telefonos)
+                dto => dto.MapFrom(dto => dto.Telefonos)
+            )
+            .ForMember
+            (
+                entidad => entidad.CategoriaPersonas, dto =>
+                dto.MapFrom(cp => cp.CategoriasId!.Select(id => new CategoriaPersona { categoriaId = id }))
+
             );
             CreateMap<CrearCorreodto, Correo>();
             CreateMap<CrearDirrecciondto, Dirreccion>();
             CreateMap<CrearTelefonodto, Telefono>();
+            
 
             CreateMap<Persona, Personadto>()
             .ForMember(
@@ -44,6 +51,7 @@ namespace web_api_personas.Utilidades
                 entidad => entidad.Telefonos,
                 dto => dto.MapFrom(dto => dto.Telefonos)
             );
+            
 
             CreateMap<Correo, Correodto>();
             CreateMap<Dirreccion, Dirrecciondto>();
