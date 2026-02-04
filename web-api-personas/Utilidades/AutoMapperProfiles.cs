@@ -32,6 +32,22 @@ namespace web_api_personas.Utilidades
             CreateMap<CrearCorreodto, Correo>();
             CreateMap<CrearDirrecciondto, Dirreccion>();
             CreateMap<CrearTelefonodto, Telefono>();
+
+            CreateMap<Persona, Personadto>()
+            .ForMember(
+                entidad => entidad.Correos,
+                dto => dto.MapFrom(dto => dto.Correos)
+            ).ForMember(
+                entidad => entidad.Dirrecciones,
+                dto => dto.MapFrom(dto => dto.Dirreciones)
+            ).ForMember(
+                entidad => entidad.Telefonos,
+                dto => dto.MapFrom(dto => dto.Telefonos)
+            );
+
+            CreateMap<Correo, Correodto>();
+            CreateMap<Dirreccion, Dirrecciondto>();
+            CreateMap<Telefono, Telefonodto>();
         }
     }
 }

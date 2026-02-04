@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.EntityFrameworkCore;
 using web_api_personas.DTOs;
 using web_api_personas.Entidades;
+using web_api_personas.Utilidades;
 
 namespace web_api_personas.Controllers
 {
@@ -22,6 +25,18 @@ namespace web_api_personas.Controllers
             this.mapper = mapper;
             
         }
+        [HttpGet] //api/personas
+        [OutputCache(Tags = [cacheTag])]
+        public async Task <List<Personadto>> Get([FromQuery] Paginaciondto paginacion)
+        {
+            var queryable = context.Personas;
+            await HttpContext.InsertarParametrosPaginacionEncabecera(queryable);
+            return await queryable
+                .OrderBy(p=>p.nombre)
+                .Paginar(paginacion)
+                .ProjectTo<Personadto>(mapper.ConfigurationProvider).ToListAsync();
+
+        }
         [HttpPost]
         public async Task <IActionResult> Post( CrearPersonadto crearpersonadto)
         {
@@ -32,6 +47,17 @@ namespace web_api_personas.Controllers
         }
         [HttpGet("{id:int}", Name = "AgregarPersona")]
         [OutputCache(Tags = [cacheTag])]
+        public async Task <ActionResult<Personadto>> Get(int id)
+        {
+            var persona = await context.Personas
+                .ProjectTo<Personadto>(mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            if (persona is null)
+            {
+                return NotFound();
+            }
+            return persona;
+        }
         [HttpDelete]
         public void Delete()
         {

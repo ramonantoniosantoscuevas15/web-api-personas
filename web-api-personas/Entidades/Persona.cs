@@ -17,6 +17,6 @@ namespace web_api_personas.Entidades
         public List<Correo> Correos { get; set; } = new List<Correo>();
         public List<Dirreccion> Dirreciones { get; set; } = new List<Dirreccion>();
         public List<Telefono> Telefonos { get; set; } = new List<Telefono>();
-        //public List<CategoriaPersona> CategoriaPersonas { get; set; } = new List<CategoriaPersona>();
+        public List<CategoriaPersona> CategoriaPersonas { get; set; } = new List<CategoriaPersona>();
     }
 }

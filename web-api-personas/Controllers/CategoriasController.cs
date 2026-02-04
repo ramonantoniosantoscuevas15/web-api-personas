@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using web_api_personas.DTOs;
 using web_api_personas.Entidades;
 using web_api_personas.Utilidades;
@@ -25,7 +26,7 @@ namespace web_api_personas.Controllers
             this.context = context;
             this.mapper = mapper;
         }
-        [HttpGet]//api/categorias
+        [HttpGet] //api/categorias
         [OutputCache(Tags = [cacheTag])]
         public async Task<List<Categoriadto>> Get([FromQuery] Paginaciondto paginacion)
         {
@@ -37,6 +38,19 @@ namespace web_api_personas.Controllers
                 .ProjectTo<Categoriadto>(mapper.ConfigurationProvider).ToListAsync();
             
         }
+        [HttpGet("{id:int}", Name = "obtenerporid")] //api/categorias/500
+        [OutputCache(Tags = [cacheTag])]
+        public async Task<ActionResult<Categoriadto>> Get(int id)
+        {
+            var categoria = await context.Categorias.
+                ProjectTo<Categoriadto>(mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(c => c.Id == id);
+            if (categoria is null)
+            {
+                return NotFound();
+            }
+            return categoria;
+        }
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CrearCategoriadto categoriaCreaciondto)
         {
@@ -44,21 +58,9 @@ namespace web_api_personas.Controllers
             context.Add(categoria);
             await context.SaveChangesAsync();
             await outputCacheStore.EvictByTagAsync(cacheTag,default);
-            return CreatedAtRoute("agregarcategoria", new {id = categoria.Id},categoria);
+            return CreatedAtRoute("obtenerporid", new {id = categoria.Id},categoria);
         }
-        [HttpGet ("{id:int}" )]//api/categorias/
-        [OutputCache(Tags = [cacheTag])]
-        public async Task<ActionResult<Categoriadto>> Get(int id)
-        {
-            var categoria = await context.Categorias.
-                ProjectTo<Categoriadto>(mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(c=> c.Id == id);
-            if (categoria == null)
-            {
-                return NotFound();
-            }
-            return categoria;
-        }
+        
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Put( int id, [FromBody] CrearCategoriadto categoriaCreaciondto)
         {
@@ -77,10 +79,18 @@ namespace web_api_personas.Controllers
         }
 
 
-        [HttpDelete]
-        public void Delete()
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            // Lógica para manejar la solicitud DELETE a /api/categorias
+            var registrosBorrados = await context.Categorias
+                .Where(c => c.Id == id)
+                .ExecuteDeleteAsync();
+            if (registrosBorrados == 0)
+            {
+                return NotFound();
+            }
+            await outputCacheStore.EvictByTagAsync(cacheTag, default);
+            return NoContent();
         }
     }
 }

@@ -31,6 +31,11 @@ builder.Services.AddCors(opciones =>
         .WithExposedHeaders("cantidadTotalRegistros");
 
     });
+    opciones.AddPolicy("libre", configuracion => {
+
+        configuracion.WithOrigins(origenesPermitidos).AllowAnyHeader().AllowAnyMethod();
+
+    } );
    
 });
 var app = builder.Build();
