@@ -1,15 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 using web_api_personas.Entidades;
+using web_api_personas.Utilidades;
 
 namespace web_api_personas
 {
     public class ApplicationDbContext : DbContext
     {
+        
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
+
+            
+            
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyUtcDateTimeConverter();
             modelBuilder.Entity<CategoriaPersona>().HasKey(c => new { c.categoriaId,c.personaId });
             
         }
@@ -22,6 +29,7 @@ namespace web_api_personas
 
         protected ApplicationDbContext()
         {
+            
         }
     }
 }

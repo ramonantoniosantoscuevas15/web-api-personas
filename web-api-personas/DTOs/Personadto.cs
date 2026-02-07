@@ -10,5 +10,6 @@
         public List<Correodto> Correos { get; set; } = null!;
         public List<Dirrecciondto>  Dirrecciones { get; set; } = null!;
         public List<Telefonodto> Telefonos { get; set; } = null!;
+        //public List<Categoriadto> Categorias { get; set; } = null!;
     }
 }

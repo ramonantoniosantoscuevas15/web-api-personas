@@ -32,13 +32,14 @@ namespace web_api_personas.Utilidades
             .ForMember
             (
                 entidad => entidad.CategoriaPersonas, dto =>
-                dto.MapFrom(cp => cp.CategoriasId!.Select(id => new CategoriaPersona { categoriaId = id }))
+               dto.MapFrom(cp => cp.CategoriasId!.Select(id => new CategoriaPersona { categoriaId = id }))
 
             );
             CreateMap<CrearCorreodto, Correo>();
             CreateMap<CrearDirrecciondto, Dirreccion>();
             CreateMap<CrearTelefonodto, Telefono>();
-            
+            CreateMap<CrearPersonadto, Personadto>();
+
 
             CreateMap<Persona, Personadto>()
             .ForMember(
@@ -51,6 +52,10 @@ namespace web_api_personas.Utilidades
                 entidad => entidad.Telefonos,
                 dto => dto.MapFrom(dto => dto.Telefonos)
             );
+            //.ForMember(
+            //    entidad => entidad.Categorias,
+            //    dto => dto.MapFrom(dto => dto.CategoriaPersonas)
+            //    );
             
 
             CreateMap<Correo, Correodto>();
