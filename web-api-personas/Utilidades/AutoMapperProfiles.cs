@@ -55,7 +55,7 @@ namespace web_api_personas.Utilidades
             //.ForMember(
             //    entidad => entidad.Categorias,
             //    dto => dto.MapFrom(dto => dto.CategoriaPersonas)
-            //    );
+            //);
             
 
             CreateMap<Correo, Correodto>();

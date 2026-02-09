@@ -38,16 +38,16 @@ namespace web_api_personas.Controllers
 
         }
         [HttpPost]
-        public async Task <IActionResult> Post(CrearPersonadto crearpersonadto)
+        public async Task <IActionResult> Post([FromBody] CrearPersonadto crearpersonadto)
         {
             var persona = mapper.Map<Persona>(crearpersonadto);
             context.Add(persona);
             await context.SaveChangesAsync();
             await outputCacheStore.EvictByTagAsync(cacheTag,default);
             var personaDto = mapper.Map<Personadto>(persona);
-            return CreatedAtRoute("AgregarPersona", new {id = persona.Id}, personaDto);
+            return CreatedAtRoute("Obtenerpersonaporid", new {id = persona.Id}, personaDto);
         }
-        [HttpGet("{id:int}", Name = "AgregarPersona")]
+        [HttpGet("{id:int}", Name = "Obtenerpersonaporid")]
         [OutputCache(Tags = [cacheTag])]
         public async Task <ActionResult<Personadto>> Get(int id)
         {
