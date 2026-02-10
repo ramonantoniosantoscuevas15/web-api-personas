@@ -27,11 +27,25 @@ namespace web_api_personas.Controllers
         }
         [HttpGet] //api/personas
         [OutputCache(Tags = [cacheTag])]
+        [HttpGet("listadopersonas")]
+        //public async Task <ActionResult<Listadopersonasdto>> Get()
+        //{
+        //    var categorias = await context.Personas
+        //        .Where(p => p.CategoriaPersonas.Select(pc => pc.personaId).Contains(p.Id))
+        //        .OrderBy(p => p.nombre).ToListAsync();
+
+
+        //}
+
+        [HttpGet("listado")] //api/personas/listado
         public async Task <List<Personadto>> Get([FromQuery] Paginaciondto paginacion)
         {
             var queryable = context.Personas;
             await HttpContext.InsertarParametrosPaginacionEncabecera(queryable);
             return await queryable
+                .Where(p =>p.Correos.Select(c => c.PersonaId).Contains(p.Id) &&
+                            p.Dirreciones.Select(d => d.PersonaId).Contains(p.Id) &&
+                            p.Telefonos.Select(t => t.PersonaId).Contains(p.Id))
                 .OrderBy(p=>p.nombre)
                 .Paginar(paginacion)
                 .ProjectTo<Personadto>(mapper.ConfigurationProvider).ToListAsync();
