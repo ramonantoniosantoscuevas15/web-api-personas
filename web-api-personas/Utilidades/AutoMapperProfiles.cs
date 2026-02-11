@@ -39,6 +39,14 @@ namespace web_api_personas.Utilidades
             CreateMap<CrearDirrecciondto, Dirreccion>();
             CreateMap<CrearTelefonodto, Telefono>();
             CreateMap<CrearPersonadto, Personadto>();
+            //CreateMap<Persona, PersonasDetalledto>()
+            //    .ForMember(p => p.Categorias, entidad => entidad.MapFrom(p => p.CategoriaPersonas));
+            //CreateMap<CategoriaPersona, Categoriadto>()
+            //    .ForMember(c=> c.Id, cp => cp.MapFrom(cp => cp.categoriaId))
+            //    .ForMember(c => c.tipo, cp => cp.MapFrom(cp => cp.Categoria.tipo));
+
+            //CreateMap<Dirreccion, Dirrecciondto>();
+
 
 
             CreateMap<Persona, Personadto>()
@@ -51,12 +59,15 @@ namespace web_api_personas.Utilidades
             ).ForMember(
                 entidad => entidad.Telefonos,
                 dto => dto.MapFrom(dto => dto.Telefonos)
+            )
+            .ForMember(
+              entidad => entidad.Categorias,
+                dto => dto.MapFrom(dto => dto.CategoriaPersonas)
             );
-            //.ForMember(
-            //    entidad => entidad.Categorias,
-            //    dto => dto.MapFrom(dto => dto.CategoriaPersonas)
-            //);
-            
+            CreateMap<CategoriaPersona, Categoriadto>()
+                .ForMember(c=> c.Id, cp => cp.MapFrom(cp => cp.categoriaId))
+                .ForMember(c => c.tipo, cp => cp.MapFrom(cp => cp.Categoria.tipo));
+
 
             CreateMap<Correo, Correodto>();
             CreateMap<Dirreccion, Dirrecciondto>();

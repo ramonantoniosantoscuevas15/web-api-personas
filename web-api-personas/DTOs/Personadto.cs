@@ -12,7 +12,7 @@ namespace web_api_personas.DTOs
         public List<Correodto> Correos { get; set; } = new List<Correodto>();
         public List<Dirrecciondto>  Dirrecciones { get; set; } = new List<Dirrecciondto>();
         public List<Telefonodto> Telefonos { get; set; } = new List<Telefonodto>();
-        //public List<Categoria> Categorias { get; set; } = new List<Categoria>();
+        public List<Categoriadto> Categorias { get; set; } = new List<Categoriadto>();
 
     }
 }
