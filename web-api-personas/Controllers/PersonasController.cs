@@ -39,9 +39,9 @@ namespace web_api_personas.Controllers
             return await queryable
                 .Where(p =>p.Correos.Select(c => c.PersonaId).Contains(p.Id) &&
                             p.Dirreciones.Select(d => d.PersonaId).Contains(p.Id) &&
-                            p.Telefonos.Select(t => t.PersonaId).Contains(p.Id)) //&&
-                            //p.CategoriaPersonas.Select(cp => cp.personaId).Contains(p.Id)
-                            //)
+                            p.Telefonos.Select(t => t.PersonaId).Contains(p.Id) &&
+                            p.CategoriaPersonas.Select(cp => cp.personaId).Contains(p.Id)
+                            )
                             
 
                 .OrderBy(p=>p.nombre)
