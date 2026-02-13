@@ -13,6 +13,7 @@ namespace web_api_personas.DTOs
         public List<Dirrecciondto>  Dirrecciones { get; set; } = new List<Dirrecciondto>();
         public List<Telefonodto> Telefonos { get; set; } = new List<Telefonodto>();
         public List<Categoriadto> Categorias { get; set; } = new List<Categoriadto>();
+       
 
     }
 }

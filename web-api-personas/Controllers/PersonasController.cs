@@ -26,18 +26,12 @@ namespace web_api_personas.Controllers
             
         }
         [HttpGet] //api/personas
-        [OutputCache(Tags = [cacheTag])]
-        [HttpGet("listadopersonas")]
-        //public async Task <ActionResult<Listadopersonasdto>> Get()
-        //{
-        //    var categorias = await context.Personas
-        //        .Where(p => p.CategoriaPersonas.Select(pc => pc.personaId).Contains(p.Id))
-        //        .OrderBy(p => p.nombre).ToListAsync();
-
-
-        //}
+        
+        
 
         [HttpGet("listado")] //api/personas/listado
+        [OutputCache(Tags = [cacheTag])]
+
         public async Task <List<Personadto>> Get([FromQuery] Paginaciondto paginacion)
         {
             var queryable = context.Personas;
@@ -45,9 +39,9 @@ namespace web_api_personas.Controllers
             return await queryable
                 .Where(p =>p.Correos.Select(c => c.PersonaId).Contains(p.Id) &&
                             p.Dirreciones.Select(d => d.PersonaId).Contains(p.Id) &&
-                            p.Telefonos.Select(t => t.PersonaId).Contains(p.Id) &&
-                            p.CategoriaPersonas.Select(cp => cp.personaId).Contains(p.Id)
-                            )
+                            p.Telefonos.Select(t => t.PersonaId).Contains(p.Id)) //&&
+                            //p.CategoriaPersonas.Select(cp => cp.personaId).Contains(p.Id)
+                            //)
                             
 
                 .OrderBy(p=>p.nombre)
@@ -85,6 +79,45 @@ namespace web_api_personas.Controllers
                 .ProjectTo<Categoriadto>(mapper.ConfigurationProvider)
                 .ToListAsync(); 
             return new CategoriaPersonadto { Categorias = categorias };
+        }
+        [HttpGet("Putget{id:int}")]
+        public async Task <ActionResult<PersonasPutgetdto>> Putget(int id)
+        {
+            var persona = await context.Personas
+                .ProjectTo<Personadto>(mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            if (persona is null)
+            {
+                NotFound();
+            }
+            var categoriasSeleccionadasId = persona.Categorias.Select(c => c.Id).ToList();
+            var categoriasNoSeleccionadas = await context.Categorias.Where(g =>
+            !categoriasSeleccionadasId.Contains(g.Id))
+                .ProjectTo<Categoriadto>(mapper.ConfigurationProvider)
+                .ToListAsync();
+            var respuesta = new PersonasPutgetdto();
+            respuesta.Persona = persona;
+            respuesta.categoriasSeleccionadas = persona.Categorias;
+            respuesta.categoriasNoSeleccionadas = categoriasNoSeleccionadas;
+            return respuesta;
+
+
+        }
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Put(int id, [FromBody] CrearPersonadto crearPersonadto)
+        {
+            var persona = await context.Personas
+                .Include(p => p.CategoriaPersonas)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            if(persona == null)
+            {
+                return NotFound();
+            }
+            persona = mapper.Map(crearPersonadto, persona);
+            await context.SaveChangesAsync();
+            await outputCacheStore.EvictByTagAsync(cacheTag, default);
+            return NoContent();
+
         }
         [HttpDelete]
         public void Delete()
