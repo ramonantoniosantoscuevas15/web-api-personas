@@ -26,6 +26,17 @@ namespace web_api_personas.Controllers
             this.context = context;
             this.mapper = mapper;
         }
+        [HttpGet("todos")] //api/categorias
+        [OutputCache(Tags = [cacheTag])]
+        public async Task<List<Categoriadto>> Get()
+        {
+            
+            return await context.Categorias
+                .OrderBy(c => c.tipo)
+                
+                .ProjectTo<Categoriadto>(mapper.ConfigurationProvider).ToListAsync();
+
+        }
         [HttpGet] //api/categorias
         [OutputCache(Tags = [cacheTag])]
         public async Task<List<Categoriadto>> Get([FromQuery] Paginaciondto paginacion)

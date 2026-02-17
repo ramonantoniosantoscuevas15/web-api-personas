@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using web_api_personas.DTOs;
 using web_api_personas.Entidades;
 using web_api_personas.Utilidades;
@@ -25,9 +26,42 @@ namespace web_api_personas.Controllers
             this.mapper = mapper;
             
         }
+        [HttpGet("Filtro")]//api/personas/filtro
+        [OutputCache(Tags = [cacheTag])]
+        public async Task<List<Personadto>> Filtrar([FromQuery] PersonasFiltrodto personasFiltrodto)
+        {
+            var personasQueryable = context.Personas.AsQueryable();
+            if(!string.IsNullOrWhiteSpace(personasFiltrodto.nombre))
+            {
+                personasQueryable = personasQueryable.Where(p => p.nombre.Contains(personasFiltrodto.nombre));
+            }
+            if (personasFiltrodto.CategoriasId!=0)
+            {
+                personasQueryable = personasQueryable.Where(p => p.CategoriaPersonas.Select(cp => cp.categoriaId).Contains(personasFiltrodto.CategoriasId));
+
+            }
+            await HttpContext.InsertarParametrosPaginacionEncabecera(personasQueryable);
+            var perosnas = await personasQueryable.Paginar(personasFiltrodto.Paginacion)
+                .ProjectTo<Personadto>(mapper.ConfigurationProvider).ToListAsync();
+            return perosnas;
+
+
+            //return await context.Personas
+            //    .Where(p => p.Correos.Select(c => c.PersonaId).Contains(p.Id) &&
+            //                p.Dirreciones.Select(d => d.PersonaId).Contains(p.Id) &&
+            //                p.Telefonos.Select(t => t.PersonaId).Contains(p.Id) &&
+            //                p.CategoriaPersonas.Select(cp => cp.personaId).Contains(p.Id)
+            //                )
+
+
+            //    .OrderBy(p => p.nombre)
+
+            //    .ProjectTo<Personadto>(mapper.ConfigurationProvider).ToListAsync();
+
+        }
         [HttpGet] //api/personas
-        
-        
+       
+
 
         [HttpGet("listado")] //api/personas/listado
         [OutputCache(Tags = [cacheTag])]
@@ -80,7 +114,7 @@ namespace web_api_personas.Controllers
                 .ToListAsync(); 
             return new CategoriaPersonadto { Categorias = categorias };
         }
-        [HttpGet("Putget{id:int}")]
+        [HttpGet("Putget/{id:int}")]
         public async Task <ActionResult<PersonasPutgetdto>> Putget(int id)
         {
             var persona = await context.Personas
@@ -90,7 +124,8 @@ namespace web_api_personas.Controllers
             {
                 NotFound();
             }
-            var categoriasSeleccionadasId = persona.Categorias.Select(c => c.Id).ToList();
+           
+            var categoriasSeleccionadasId = persona!.Categorias.Select(c => c.Id).ToList();
             var categoriasNoSeleccionadas = await context.Categorias.Where(g =>
             !categoriasSeleccionadasId.Contains(g.Id))
                 .ProjectTo<Categoriadto>(mapper.ConfigurationProvider)
@@ -119,10 +154,18 @@ namespace web_api_personas.Controllers
             return NoContent();
 
         }
-        [HttpDelete]
-        public void Delete()
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            // Lógica para manejar la solicitud DELETE a /api/personas
+            var registrosBorrados = await context.Personas
+                .Where(p => p.Id == id)
+                .ExecuteDeleteAsync();
+            if (registrosBorrados == 0)
+            {
+                return NotFound();
+            }
+            await outputCacheStore.EvictByTagAsync(cacheTag, default);
+            return NoContent();
         }
     }
 }
