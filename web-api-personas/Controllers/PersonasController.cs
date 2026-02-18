@@ -24,18 +24,18 @@ namespace web_api_personas.Controllers
             this.outputCacheStore = outputCacheStore;
             this.context = context;
             this.mapper = mapper;
-            
+
         }
         [HttpGet("Filtro")]//api/personas/filtro
         [OutputCache(Tags = [cacheTag])]
         public async Task<List<Personadto>> Filtrar([FromQuery] PersonasFiltrodto personasFiltrodto)
         {
             var personasQueryable = context.Personas.AsQueryable();
-            if(!string.IsNullOrWhiteSpace(personasFiltrodto.nombre))
+            if (!string.IsNullOrWhiteSpace(personasFiltrodto.nombre))
             {
                 personasQueryable = personasQueryable.Where(p => p.nombre.Contains(personasFiltrodto.nombre));
             }
-            if (personasFiltrodto.CategoriasId!=0)
+            if (personasFiltrodto.CategoriasId != 0)
             {
                 personasQueryable = personasQueryable.Where(p => p.CategoriaPersonas.Select(cp => cp.categoriaId).Contains(personasFiltrodto.CategoriasId));
 
@@ -45,57 +45,44 @@ namespace web_api_personas.Controllers
                 .ProjectTo<Personadto>(mapper.ConfigurationProvider).ToListAsync();
             return perosnas;
 
-
-            //return await context.Personas
-            //    .Where(p => p.Correos.Select(c => c.PersonaId).Contains(p.Id) &&
-            //                p.Dirreciones.Select(d => d.PersonaId).Contains(p.Id) &&
-            //                p.Telefonos.Select(t => t.PersonaId).Contains(p.Id) &&
-            //                p.CategoriaPersonas.Select(cp => cp.personaId).Contains(p.Id)
-            //                )
-
-
-            //    .OrderBy(p => p.nombre)
-
-            //    .ProjectTo<Personadto>(mapper.ConfigurationProvider).ToListAsync();
-
         }
         [HttpGet] //api/personas
-       
+
 
 
         [HttpGet("listado")] //api/personas/listado
         [OutputCache(Tags = [cacheTag])]
 
-        public async Task <List<Personadto>> Get([FromQuery] Paginaciondto paginacion)
+        public async Task<List<Personadto>> Get([FromQuery] Paginaciondto paginacion)
         {
             var queryable = context.Personas;
             await HttpContext.InsertarParametrosPaginacionEncabecera(queryable);
             return await queryable
-                .Where(p =>p.Correos.Select(c => c.PersonaId).Contains(p.Id) &&
+                .Where(p => p.Correos.Select(c => c.PersonaId).Contains(p.Id) &&
                             p.Dirreciones.Select(d => d.PersonaId).Contains(p.Id) &&
                             p.Telefonos.Select(t => t.PersonaId).Contains(p.Id) &&
                             p.CategoriaPersonas.Select(cp => cp.personaId).Contains(p.Id)
                             )
-                            
 
-                .OrderBy(p=>p.nombre)
+
+                .OrderByDescending(p => p.apellido)
                 .Paginar(paginacion)
                 .ProjectTo<Personadto>(mapper.ConfigurationProvider).ToListAsync();
 
         }
         [HttpPost]
-        public async Task <IActionResult> Post([FromBody] CrearPersonadto crearpersonadto)
+        public async Task<IActionResult> Post([FromBody] CrearPersonadto crearpersonadto)
         {
             var persona = mapper.Map<Persona>(crearpersonadto);
             context.Add(persona);
             await context.SaveChangesAsync();
-            await outputCacheStore.EvictByTagAsync(cacheTag,default);
+            await outputCacheStore.EvictByTagAsync(cacheTag, default);
             var personaDto = mapper.Map<Personadto>(persona);
-            return CreatedAtRoute("Obtenerpersonaporid", new {id = persona.Id}, personaDto);
+            return CreatedAtRoute("Obtenerpersonaporid", new { id = persona.Id }, personaDto);
         }
         [HttpGet("{id:int}", Name = "Obtenerpersonaporid")]
         [OutputCache(Tags = [cacheTag])]
-        public async Task <ActionResult<Personadto>> Get(int id)
+        public async Task<ActionResult<Personadto>> Get(int id)
         {
             var persona = await context.Personas
                 .ProjectTo<Personadto>(mapper.ConfigurationProvider)
@@ -107,15 +94,15 @@ namespace web_api_personas.Controllers
             return persona;
         }
         [HttpGet("PostCategoria")]
-        public async Task <ActionResult<CategoriaPersonadto>> PostCategoria()
+        public async Task<ActionResult<CategoriaPersonadto>> PostCategoria()
         {
             var categorias = await context.Categorias
                 .ProjectTo<Categoriadto>(mapper.ConfigurationProvider)
-                .ToListAsync(); 
+                .ToListAsync();
             return new CategoriaPersonadto { Categorias = categorias };
         }
         [HttpGet("Putget/{id:int}")]
-        public async Task <ActionResult<PersonasPutgetdto>> Putget(int id)
+        public async Task<ActionResult<PersonasPutgetdto>> Putget(int id)
         {
             var persona = await context.Personas
                 .ProjectTo<Personadto>(mapper.ConfigurationProvider)
@@ -124,7 +111,7 @@ namespace web_api_personas.Controllers
             {
                 NotFound();
             }
-           
+
             var categoriasSeleccionadasId = persona!.Categorias.Select(c => c.Id).ToList();
             var categoriasNoSeleccionadas = await context.Categorias.Where(g =>
             !categoriasSeleccionadasId.Contains(g.Id))
@@ -144,7 +131,7 @@ namespace web_api_personas.Controllers
             var persona = await context.Personas
                 .Include(p => p.CategoriaPersonas)
                 .FirstOrDefaultAsync(p => p.Id == id);
-            if(persona == null)
+            if (persona == null)
             {
                 return NotFound();
             }
@@ -166,6 +153,27 @@ namespace web_api_personas.Controllers
             }
             await outputCacheStore.EvictByTagAsync(cacheTag, default);
             return NoContent();
+        }
+        [HttpGet("buscar")]
+        [OutputCache(Tags = [cacheTag])]
+        public async Task<ActionResult<List<Personadto>>> Buscar([FromQuery] string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre))
+            {
+                return new List<Personadto>();
+            }
+            return await context.Personas
+                .Where(p => p.nombre.Contains(nombre))
+                .ProjectTo<Personadto>(mapper.ConfigurationProvider)
+                .ToListAsync();
+        }
+        [HttpGet("todos")]
+        [OutputCache(Tags = [cacheTag])]
+        public async Task<List<Personadto>> Get()
+        {
+            return await context.Personas
+                .OrderBy(p => p.nombre)
+                .ProjectTo<Personadto>(mapper.ConfigurationProvider).ToListAsync();
         }
     }
 }
